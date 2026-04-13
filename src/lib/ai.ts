@@ -32,7 +32,7 @@ export async function generateCareerReport(userRiasec: RIASEC, topCareers: any[]
   `;
 
   const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash-exp",
+    model: "gemini-3-flash-preview",
     contents: prompt,
     config: {
       systemInstruction: `당신은 커리어 분석 전문가이자 서사형 리포트 생성기입니다.
