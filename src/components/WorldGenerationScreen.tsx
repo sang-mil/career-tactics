@@ -129,7 +129,7 @@ export default function WorldGenerationScreen({ riasecScores, preferences, onWor
             <div className="flex flex-col justify-center bg-indigo-50 p-8 rounded-3xl border border-indigo-100">
               <h3 className="text-2xl font-bold text-indigo-900 mb-4">새로운 퀘스트가 준비되었습니다</h3>
               <p className="text-indigo-700 mb-8 leading-relaxed">
-                이 세계에서 당신의 능력을 증명할 3가지 특별한 이벤트가 기다리고 있습니다. 
+                이 세계에서 당신의 능력을 증명할 5가지 특별한 이벤트가 기다리고 있습니다. 
                 당신의 선택은 최종 커리어 진단에 결정적인 영향을 미칩니다.
               </p>
               <button
