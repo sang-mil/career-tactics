@@ -103,7 +103,7 @@ export async function generateCareerRoadmap(careerTitle: string, userRiasec: RIA
   `;
 
   const response = await ai.models.generateContent({
-    model: "gemini-1.5-flash",
+    model: "gemini-3-flash-preview",
     contents: prompt,
     config: {
       systemInstruction: "당신은 10년 이상의 경력을 가진 베테랑 멘토입니다. 후배에게 자신의 커리어 여정을 들려주듯 친근하고 전문적인 톤으로 로드맵을 설계합니다.",
@@ -165,7 +165,7 @@ export async function translateCareerDetail(career: any) {
   `;
 
   const response = await ai.models.generateContent({
-    model: "gemini-1.5-flash",
+    model: "gemini-3-flash-preview",
     contents: prompt,
     config: {
       systemInstruction: "당신은 글로벌 직업 데이터 분석가이자 커리어 컨설턴트입니다. 영문 직업 데이터를 한국 사용자가 이해하기 쉬운 전문적인 한국어 리포트로 변환합니다.",
@@ -205,7 +205,7 @@ export async function generateWorld(userRiasec: RIASEC, preferences: UserPrefere
   });
 
   const response = await ai.models.generateContent({
-    model: "gemini-1.5-flash",
+    model: "gemini-3-flash-preview",
     contents: prompt,
     config: {
       systemInstruction: `You are a world-building engine for a career exploration RPG.
