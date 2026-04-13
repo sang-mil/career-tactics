@@ -1,0 +1,98 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: careers
+    // Document ID: careerCode
+    // Fields:
+    //   - code: string
+    //   - title: string
+    //   - description: string
+    //   - riasec: map (R, I, A, S, E, C as numbers)
+    //   - tags: list of strings
+    //   - job_zone: number
+    //   - skills: list of maps (name: string, level: number)
+    //
+    // Collection: sessions
+    // Document ID: sessionId
+    // Fields:
+    //   - userId: string (required)
+    //   - choices: list of maps (eventId, selectedOption, traits, weight)
+    //   - riasecScores: map (R, I, A, S, E, C as numbers)
+    //   - topCareers: list of maps (code, title, score)
+    //   - aiReport: map (summary, personalityAnalysis, careerExplanations, strengths, weaknesses, growthAdvice)
+    //   - createdAt: string or timestamp (required)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+         (request.auth.token.email == "YOUR_EMAIL@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    function isValidRIASEC(data) {
+      return data.R is number && data.I is number && data.A is number &&
+             data.S is number && data.E is number && data.C is number;
+    }
+
+    function isValidSession(data) {
+      return data.userId is string &&
+             data.userId.size() > 0 &&
+             (data.createdAt is string || data.createdAt is timestamp) &&
+             (!('riasecScores' in data) || isValidRIASEC(data.riasecScores)) &&
+             (!('choices' in data) || data.choices is list) &&
+             (!('topCareers' in data) || data.topCareers is list) &&
+             (!('aiReport' in data) || data.aiReport is map) &&
+             (!('generatedWorld' in data) || data.generatedWorld is map);
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /careers/{careerCode} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /sessions/{sessionId} {
+      allow read: if isAuthenticated() && (resource == null || resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isAuthenticated() && 
+                      request.resource.data.userId == request.auth.uid && 
+                      isValidSession(request.resource.data);
+      allow update: if isAuthenticated() && 
+                      resource.data.userId == request.auth.uid && 
+                      request.resource.data.userId == resource.data.userId &&
+                      isValidSession(request.resource.data);
+      allow delete: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create, update: if isOwner(userId) && 
+                              (!('role' in request.resource.data) || request.resource.data.role == 'user' || isAdmin());
+    }
+  }
+}

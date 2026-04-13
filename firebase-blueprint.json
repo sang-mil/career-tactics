@@ -1,0 +1,160 @@
+{
+  "entities": {
+    "Career": {
+      "title": "Career",
+      "description": "Career definition with RIASEC scores and skills.",
+      "type": "object",
+      "properties": {
+        "code": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "riasec": {
+          "type": "object",
+          "properties": {
+            "R": { "type": "number" },
+            "I": { "type": "number" },
+            "A": { "type": "number" },
+            "S": { "type": "number" },
+            "E": { "type": "number" },
+            "C": { "type": "number" }
+          }
+        },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "job_zone": { "type": "number" },
+        "skills": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "level": { "type": "number" }
+            }
+          }
+        }
+      }
+    },
+    "UserSession": {
+      "title": "User Session",
+      "description": "Stores user gameplay sessions and RIASEC scores.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "The unique ID of the user." },
+        "choices": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "eventId": { "type": "string" },
+              "selectedOption": { "type": "string" },
+              "traits": { "type": "array", "items": { "type": "string" } },
+              "weight": { "type": "number" }
+            }
+          }
+        },
+        "riasecScores": {
+          "type": "object",
+          "properties": {
+            "R": { "type": "number" },
+            "I": { "type": "number" },
+            "A": { "type": "number" },
+            "S": { "type": "number" },
+            "E": { "type": "number" },
+            "C": { "type": "number" }
+          }
+        },
+        "topCareers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": { "type": "string" },
+              "title": { "type": "string" },
+              "score": { "type": "number" }
+            }
+          }
+        },
+        "aiReport": {
+          "type": "object",
+          "properties": {
+            "title": { "type": "string" },
+            "coreSummary": { "type": "string" },
+            "behaviorInsight": { "type": "string" },
+            "strengths": { "type": "array", "items": { "type": "string" } },
+            "weaknesses": { "type": "array", "items": { "type": "string" } },
+            "careerExplanations": { 
+              "type": "array", 
+              "items": { 
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "reason": { "type": "string" }
+                }
+              } 
+            },
+            "growthAdvice": { "type": "array", "items": { "type": "string" } },
+            "closingInsight": { "type": "string" }
+          }
+        },
+        "generatedWorld": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "description": { "type": "string" },
+            "core_mechanics": { "type": "array", "items": { "type": "string" } },
+            "events": { "type": "array", "items": { "$ref": "GameEvent" } }
+          }
+        },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "createdAt"]
+    },
+    "GameEvent": {
+      "title": "Game Event",
+      "type": "object",
+      "properties": {
+        "event_id": { "type": "string" },
+        "title": { "type": "string" },
+        "question": { "type": "string" },
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "text": { "type": "string" },
+              "traits": { "type": "object" }
+            }
+          }
+        }
+      }
+    },
+    "User": {
+      "title": "User",
+      "description": "User profile and roles.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string", "format": "uri" },
+        "role": { "type": "string", "enum": ["user", "admin"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email"]
+    }
+  },
+  "firestore": {
+    "/careers/{careerCode}": {
+      "schema": "Career",
+      "description": "Collection of available careers."
+    },
+    "/sessions/{sessionId}": {
+      "schema": "UserSession",
+      "description": "Collection of user diagnostic sessions."
+    },
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Collection of user profiles."
+    }
+  }
+}

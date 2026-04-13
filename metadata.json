@@ -1,0 +1,5 @@
+{
+  "name": "Remix: sRPG 커리어 진단 서비스",
+  "description": "sRPG 게임 플레이를 통해 당신의 RIASEC 성향을 분석하고 최적의 직업을 추천해드립니다.",
+  "requestFramePermissions": []
+}
